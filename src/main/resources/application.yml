@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: online-executor
+  jmx:
+    enabled: false
+info:
+  app:
+    name: ${spring.application.name}
+  describe: cityworks micro services project

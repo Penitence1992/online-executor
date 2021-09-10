@@ -1,0 +1,4 @@
+include:
+  project: "ci/ci-template"
+  file: "java-springboot-gradlew.yml"
+  ref: master

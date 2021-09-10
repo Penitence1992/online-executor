@@ -1,0 +1,34 @@
+plugins {
+    id 'org.springframework.boot' version '2.4.5'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+
+group = 'org.penitence'
+version = '1.0.0'
+sourceCompatibility = '11'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    maven { url 'https://maven.ascs.tech' }
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.ow2.asm:asm:9.2'
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'cn.cityworks:cityworks-core:1.1.1'
+    implementation 'cn.cityworks:cn-cityworks-starter-engineering:latest.release'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+test {
+    useJUnitPlatform()
+}

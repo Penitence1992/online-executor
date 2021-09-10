@@ -1,0 +1,3 @@
+rootProject.name = 'online-executor'
+
+include 'git_modules:god:gradle'
