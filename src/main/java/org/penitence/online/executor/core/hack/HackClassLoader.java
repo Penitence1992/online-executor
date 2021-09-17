@@ -14,13 +14,15 @@ import java.util.Collection;
 @Slf4j
 public class HackClassLoader extends ClassLoader {
 
+    private static final HackClassLoader instance = new HackClassLoader();
+
     private final Collection<String> HACK_CLASS = Arrays.asList(
         "org.penitence.online.executor.core.hack.HackInputStream",
         "org.penitence.online.executor.core.hack.HackPrintStream",
         "org.penitence.online.executor.core.hack.HackSystem"
     );
 
-    public HackClassLoader() {
+    private HackClassLoader() {
         super(null);
         HACK_CLASS.forEach(c -> {
             try {
@@ -30,7 +32,6 @@ public class HackClassLoader extends ClassLoader {
                 log.error("获取类:{} 的字节码失败", c);
             }
         });
-//        super(HackClassLoader.class.getClassLoader());
     }
 
     private byte[] findByteCodes(String className) throws IOException {
@@ -38,5 +39,9 @@ public class HackClassLoader extends ClassLoader {
         ClassWriter w = new ClassWriter(r, 0);
         r.accept(w, 0);
         return w.toByteArray();
+    }
+
+    public static HackClassLoader getInstance() {
+        return instance;
     }
 }

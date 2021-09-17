@@ -1,6 +1,5 @@
 package org.penitence.online.executor.core;
 
-import cn.cityworks.cityworkscore.exceptions.ServiceException;
 import org.penitence.online.executor.core.exception.CompileException;
 
 import java.io.ByteArrayInputStream;
@@ -29,7 +28,7 @@ public final class JavaExecutor {
             Future<ExecutorResult> future = pool.submit(() -> call(code, args));
             return future.get(RUN_TIME_LIMITED, TimeUnit.SECONDS);
         } catch (RejectedExecutionException e) {
-            throw new ServiceException(500, "任务已满");
+            throw new RuntimeException("等待任务已满");
         } catch (ExecutionException e) {
             return ExecutorResult
                 .builder().success(false).errors(Collections.singletonList(e.getCause().getMessage())).build();
@@ -49,7 +48,12 @@ public final class JavaExecutor {
             MemoryClassLoader classLoader = new MemoryClassLoader();
             classes.forEach(classLoader::loadByte);
             try {
-                Class<?> clz = classLoader.loadClass(JavaStringCompiler.findPackageName(code) + "." + JavaStringCompiler.findClassName(code));
+                String className = JavaStringCompiler.findClassName(code);
+                String fullClassName = Optional.ofNullable(JavaStringCompiler.findPackageName(code))
+                    .map(p -> p + ".")
+                    .map(p -> p + className)
+                    .orElse(className);
+                Class<?> clz = classLoader.loadClass(fullClassName);
 
                 Method method = clz.getMethod("main", String[].class);
                 method.invoke(null, (Object) args);
@@ -77,7 +81,7 @@ public final class JavaExecutor {
         } catch (CompileException ce) {
             List<String> errors = new LinkedList<>();
             ce.getCollector().getDiagnostics().forEach(d -> {
-                errors.add("Compilation error at " + d.getLineNumber() + ".");
+                errors.add(d.toString());
             });
             return ExecutorResult.builder().success(false).errors(errors).build();
         }

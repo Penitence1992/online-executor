@@ -8,7 +8,7 @@ import org.penitence.online.executor.core.hack.HackClassLoader;
 public class MemoryClassLoader extends ClassLoader {
 
     public MemoryClassLoader() {
-        super(new HackClassLoader());
+        super(HackClassLoader.getInstance());
     }
 
     public Class<?> loadByte(byte[] classBytes) {

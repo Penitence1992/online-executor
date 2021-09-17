@@ -15,15 +15,13 @@ configurations {
 }
 
 repositories {
-    maven { url 'https://maven.ascs.tech' }
+    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
     implementation 'org.ow2.asm:asm:9.2'
-    implementation 'org.springframework.boot:spring-boot-starter'
-    implementation 'cn.cityworks:cityworks-core:1.1.1'
-    implementation 'cn.cityworks:cn-cityworks-starter-engineering:latest.release'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

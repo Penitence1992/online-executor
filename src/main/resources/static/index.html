@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh">
+<head>
+    <title>在线代码执行器</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="lib/codemirror/lib/codemirror.css">
+    <script src="lib/codemirror/lib/codemirror.js"></script>
+
+    <!--Java代码高亮必须引入-->
+    <link rel="stylesheet" href="lib/codemirror/addon/hint/show-hint.css">
+    <script src="lib/codemirror/addon/hint/show-hint.js"></script>
+    <script src="lib/codemirror/edit/matchbrackets.js"></script>
+    <script src="lib/codemirror/mode/clike.js"></script>
+</head>
+<!--下面两个是使用Code Mirror必须引入的-->
+<body>
+
+<textarea id="code">
+package org.penitence.test;
+
+import java.io.IOException;
+
+public class HelloWorld {
+
+    public static void main(String[] args) throws IOException {
+
+        System.out.println("hello world");
+        System.err.println("hello error world");
+
+    }
+
+}
+
+</textarea>
+<button id="submit" name="提交" onclick="submit()">提交</button>
+
+<div>
+    <div>普通输出:</div>
+    <div id="out"></div>
+</div>
+<div>
+    <div>错误输出:</div>
+    <div id="err"></div>
+</div>
+
+<div id="error-div" hidden="hidden">
+    <div>错误: </div>
+    <pre id="code-error"></pre>
+</div>
+</body>
+<script type="text/javascript">
+    var editor=CodeMirror.fromTextArea(document.getElementById("code"),{
+                autofocus: true,
+                lineNumbers: true,   //显示行号
+                smartIndent: true, // 自动缩进
+                autoCloseBrackets: true, // 自动补全括号
+                matchBrackets: true,
+                mode: "text/x-java"
+        });
+
+    editor.setSize("100%", "60vh")
+
+     function submit() {
+        document.getElementById("submit").setAttribute("disabled", "true")
+        let code = editor.getValue()
+        fetch("/v1/executor/java", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body:JSON.stringify({
+                "code": code
+            })
+        }).then(res => res.json())
+         .then(data => {
+             document.getElementById("out").innerText = data.out
+             document.getElementById("err").innerText = data.err
+             document.getElementById("error-div").hidden = data.success
+             if (!data.success) {
+                 let text = "";
+                 data.errors.forEach(v => {
+                     text += "\n" + v
+                 })
+                 document.getElementById("code-error").innerText = text
+             }
+             document.getElementById("submit").removeAttribute("disabled")
+         })
+
+
+    }
+</script>
+</html>

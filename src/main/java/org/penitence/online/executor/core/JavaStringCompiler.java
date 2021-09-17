@@ -23,9 +23,12 @@ public class JavaStringCompiler implements Compiler {
 
 
     /**
-     * 使用 Pattern 预编译功能
+     * 使用 Pattern 预编译功能获取传入的代码中的主类
      */
     private static final Pattern CLASS_PATTERN = Pattern.compile("class\\s+([$_a-zA-Z][$_a-zA-Z0-9]*)\\s*");
+    /**
+     * 使用 Pattern 获取文件的包名称
+     */
     private static final Pattern PACKAGE_PATTERN = Pattern.compile("package\\s+([$_a-zA-Z][.$_a-zA-Z0-9]*)\\s*;");
 
     @Override
@@ -66,7 +69,7 @@ public class JavaStringCompiler implements Compiler {
         if (matcher.find()) {
             return matcher.group(1);
         } else {
-            throw new IllegalArgumentException("No valid package");
+            return null;
         }
     }
 
